@@ -1,24 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const TaskForm = ({ task, onSubmit, onCancel }) => {
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    status: 'pending',
-    due_date: '',
-  });
+  const [formData, setFormData] = useState(() => ({
+    title: task?.title || '',
+    description: task?.description || '',
+    status: task?.status || 'pending',
+    due_date: task?.due_date ? task.due_date.split('T')[0] : '',
+  }));
+  
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    if (task) {
-      setFormData({
-        title: task.title,
-        description: task.description || '',
-        status: task.status,
-        due_date: task.due_date.split('T')[0],
-      });
-    }
-  }, [task]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,7 +16,6 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -37,17 +26,14 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
 
   const validateForm = () => {
     const newErrors = {};
-
     if (!formData.title.trim()) {
       newErrors.title = 'Title is required';
     }
-
     if (!formData.due_date) {
       newErrors.due_date = 'Due date is required';
     } else if (new Date(formData.due_date) < new Date().setHours(0, 0, 0, 0)) {
       newErrors.due_date = 'Due date cannot be in the past';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -62,9 +48,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
   return (
     <form onSubmit={handleSubmit} className="task-form">
       <div className="form-group">
-        <label htmlFor="title" className="form-label">
-          Title *
-        </label>
+        <label htmlFor="title" className="form-label">Title *</label>
         <input
           type="text"
           id="title"
@@ -74,15 +58,11 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
           className={`form-input ${errors.title ? 'error' : ''}`}
           placeholder="Enter task title"
         />
-        {errors.title && (
-          <div className="form-error">{errors.title}</div>
-        )}
+        {errors.title && <div className="form-error">{errors.title}</div>}
       </div>
 
       <div className="form-group">
-        <label htmlFor="description" className="form-label">
-          Description
-        </label>
+        <label htmlFor="description" className="form-label">Description</label>
         <textarea
           id="description"
           name="description"
@@ -95,9 +75,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="status" className="form-label">
-          Status *
-        </label>
+        <label htmlFor="status" className="form-label">Status *</label>
         <select
           id="status"
           name="status"
@@ -112,9 +90,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="due_date" className="form-label">
-          Due Date *
-        </label>
+        <label htmlFor="due_date" className="form-label">Due Date *</label>
         <input
           type="date"
           id="due_date"
@@ -123,23 +99,12 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
           onChange={handleChange}
           className={`form-input ${errors.due_date ? 'error' : ''}`}
         />
-        {errors.due_date && (
-          <div className="form-error">{errors.due_date}</div>
-        )}
+        {errors.due_date && <div className="form-error">{errors.due_date}</div>}
       </div>
 
       <div className="form-actions">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="btn btn-cancel"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="btn btn-primary"
-        >
+        <button type="button" onClick={onCancel} className="btn btn-cancel">Cancel</button>
+        <button type="submit" className="btn btn-primary">
           {task ? 'Update Task' : 'Create Task'}
         </button>
       </div>

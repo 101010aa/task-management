@@ -20,6 +20,12 @@ const TaskItem = ({ task, onEdit, onDelete }) => {
     });
   };
 
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this task?')) {
+      onDelete(task.id);
+    }
+  };
+
   return (
     <div className="task-item">
       <div className="task-header">
@@ -45,7 +51,7 @@ const TaskItem = ({ task, onEdit, onDelete }) => {
             Edit
           </button>
           <button
-            onClick={() => onDelete(task.id)}
+            onClick={handleDelete}
             className="btn btn-delete"
           >
             Delete

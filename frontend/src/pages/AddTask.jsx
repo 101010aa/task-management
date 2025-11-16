@@ -11,9 +11,8 @@ const AddTask = () => {
     try {
       await taskAPI.create(formData);
       navigate('/');
-    } catch (err) {
-      setError('Failed to create task. Please check your connection and try again.');
-      console.error('Error creating task:', err);
+    } catch {
+      setError('Failed to create task. Please try again.');
     }
   };
 
@@ -28,11 +27,7 @@ const AddTask = () => {
         <p>Create a new task to manage</p>
       </div>
 
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
+      {error && <div className="error-message">{error}</div>}
 
       <div className="form-card">
         <TaskForm
